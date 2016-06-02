@@ -40,9 +40,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="RandomDeploy.cs" />
   </ItemGroup>
   <ItemGroup>

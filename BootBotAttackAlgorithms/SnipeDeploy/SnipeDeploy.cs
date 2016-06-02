@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Messaging;
 using CoC_Bot;
 using CoC_Bot.Internals;
-using CoC_Bot.Modules.AttackAlgorithms;
-using CoC_Bot.Modules.Helpers;
-using Shared;
 using CoC_Bot.API;
 using CoC_Bot.API.Buildings;
 using JetBrains.Annotations;

@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using CoC_Bot;
 using CoC_Bot.API;
-using CoC_Bot.API.Buildings;
-using CoC_Bot.Internals;
 
 [assembly: Addon("RedLineDeploy", "Deploy troops along the red line", "Kloc")]
 namespace RedLineDeploy

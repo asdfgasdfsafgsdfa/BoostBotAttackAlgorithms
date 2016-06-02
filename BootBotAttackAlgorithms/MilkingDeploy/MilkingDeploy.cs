@@ -7,7 +7,6 @@ using CoC_Bot;
 using CoC_Bot.API;
 using CoC_Bot.API.Buildings;
 using CoC_Bot.Internals;
-using Shared;
 using CoC_Bot.Modules;
 using CoC_Bot.Modules.AttackAlgorithms;
 
