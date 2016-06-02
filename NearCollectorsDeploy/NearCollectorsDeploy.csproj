@@ -4,31 +4,28 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BD493873-622E-4435-ABC2-81A100538825}</ProjectGuid>
+    <ProjectGuid>{BDFCC0B5-5359-4FB0-BA1D-84A682F85A2E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RandomDeploy</RootNamespace>
-    <AssemblyName>RandomDeploy</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <RootNamespace>NearCollectorsDeploy</RootNamespace>
+    <AssemblyName>NearCollectorsDeploy</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\CoC Bot.Main\bin\Debug\Addons\RandomDeploy\</OutputPath>
+    <OutputPath>..\..\CoC Bot.Main\bin\Debug\Addons\NearCollectorsDeploy\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -36,34 +33,36 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="RandomDeploy.cs" />
+    <Reference Include="CoC Bot.Core">
+      <HintPath>..\..\CoC Bot.Main\bin\CoC Bot.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Shared">
+      <HintPath>..\..\CoC Bot.Main\bin\Shared.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoC Bot.Main\CoC Bot.Main.csproj">
-      <Project>{56c3730e-d493-414a-a478-7704d6391159}</Project>
+    <Compile Include="NearCollectorsDeploy.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CoC Bot.Main\CoC Bot.Main.csproj">
+      <Project>{56C3730E-D493-414A-A478-7704D6391159}</Project>
       <Name>CoC Bot.Main</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="CoC Bot.Core">
-      <HintPath>..\CoC Bot.Main\bin\CoC Bot.Core.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Shared">
-      <HintPath>..\CoC Bot.Main\bin\Shared.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Drawing" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>if "$(ConfigurationName)" == "Release" xcopy /y /e /i "$(ProjectDir)*.*" "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\NearCollectorsDeploy\Source"
+if "$(ConfigurationName)" == "Release" del /q "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\NearCollectorsDeploy\Source\*.vspscc"
+if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\NearCollectorsDeploy\Source\obj"
+if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\NearCollectorsDeploy\Source\bin"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

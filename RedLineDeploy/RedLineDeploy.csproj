@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\CoC Bot.Main\bin\Debug\Addons\RedLineDeploy\</OutputPath>
+    <OutputPath>..\..\CoC Bot.Main\bin\Debug\Addons\RedLineDeploy\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -43,7 +43,7 @@
     <Compile Include="RedLineDeploy.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoC Bot.Main\CoC Bot.Main.csproj">
+    <ProjectReference Include="..\..\CoC Bot.Main\CoC Bot.Main.csproj">
       <Project>{56c3730e-d493-414a-a478-7704d6391159}</Project>
       <Name>CoC Bot.Main</Name>
       <Private>False</Private>
@@ -51,20 +51,20 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CoC Bot.Core">
-      <HintPath>..\CoC Bot.Main\bin\CoC Bot.Core.dll</HintPath>
+      <HintPath>..\..\CoC Bot.Main\bin\CoC Bot.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Shared">
-      <HintPath>..\CoC Bot.Main\bin\Shared.dll</HintPath>
+      <HintPath>..\..\CoC Bot.Main\bin\Shared.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if "$(ConfigurationName)" == "Release" xcopy /y /e /i "$(ProjectDir)*.*" "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\RedLineDeploy\Source"
-if "$(ConfigurationName)" == "Release" del /q "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\RedLineDeploy\Source\*.vspscc"
-if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\RedLineDeploy\Source\obj"
+    <PostBuildEvent>if "$(ConfigurationName)" == "Release" xcopy /y /e /i "$(ProjectDir)*.*" "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\RedLineDeploy\Source"
+if "$(ConfigurationName)" == "Release" del /q "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\RedLineDeploy\Source\*.vspscc"
+if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\RedLineDeploy\Source\obj"
 if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\RedLineDeploy\Source\bin"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

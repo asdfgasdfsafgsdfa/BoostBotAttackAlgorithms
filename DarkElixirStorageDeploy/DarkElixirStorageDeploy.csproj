@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{396ADCEB-61C2-46B3-B86B-7BCF9D1E4ECA}</ProjectGuid>
+    <ProjectGuid>{ED14E370-5D09-43B0-B02F-934B1AF6D0C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BreakthroughCornerDeploy</RootNamespace>
-    <AssemblyName>BreakthroughCornerDeploy</AssemblyName>
+    <RootNamespace>DarkElixirStorageDeploy</RootNamespace>
+    <AssemblyName>DarkElixirStorageDeploy</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\CoC Bot.Main\bin\Debug\Addons\BreakthroughCornerDeploy\</OutputPath>
+    <OutputPath>..\..\CoC Bot.Main\bin\Debug\Addons\DarkElixirStorageDeploy\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,11 +35,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CoC Bot.Core">
-      <HintPath>..\CoC Bot.Main\bin\CoC Bot.Core.dll</HintPath>
+      <HintPath>..\..\CoC Bot.Main\bin\CoC Bot.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Shared">
-      <HintPath>..\CoC Bot.Main\bin\Shared.dll</HintPath>
+      <HintPath>..\..\CoC Bot.Main\bin\Shared.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -47,23 +47,17 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BreakthroughCornerDeploy.cs" />
+    <Compile Include="DarkElixirStorageDeploy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CoC Bot.Main\CoC Bot.Main.csproj">
-      <Project>{56C3730E-D493-414A-A478-7704D6391159}</Project>
+    <ProjectReference Include="..\..\CoC Bot.Main\CoC Bot.Main.csproj">
+      <Project>{56c3730e-d493-414a-a478-7704d6391159}</Project>
       <Name>CoC Bot.Main</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>if "$(ConfigurationName)" == "Release" xcopy /y /e /i "$(ProjectDir)*.*" "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\BreakthroughCornerDeploy\Source"
-if "$(ConfigurationName)" == "Release" del /q "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\BreakthroughCornerDeploy\Source\*.vspscc"
-if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\BreakthroughCornerDeploy\Source\obj"
-if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\BreakthroughCornerDeploy\Source\bin"</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
