@@ -141,9 +141,7 @@ namespace NearCollectorsDeploy
 
                     // Select unit
                     Logger.Debug("[Deploy] Deploying '{0}' (x{1})", u.Name, u.Count);
-                    for (int i = 0; i < 5; i++)
-                        Input.Click(u.Rect.GetCenterRng());
-                    yield return 50;
+                    u.Select();
 
                     // Deploy them
                     while (true)
