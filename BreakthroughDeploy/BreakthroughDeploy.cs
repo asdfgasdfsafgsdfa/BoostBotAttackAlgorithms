@@ -330,7 +330,7 @@ namespace BreakthroughDeploy
 
         private void VisualizeDeployment()
         {
-            using (var bmp = Core.GetFrameCopy())
+            using (var bmp = Visualize.GetScreenCopy())
             {
                 using (var g = Graphics.FromImage(bmp))
                 {

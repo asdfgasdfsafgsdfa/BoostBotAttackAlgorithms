@@ -149,7 +149,7 @@ namespace RedLineDeploy
                             (float)(point.Y + (point.Y / Math.Sqrt(point.DistanceSq(new PointFT(0, 0)))) * 4)))
                     .ToList();
 
-            using (Bitmap bmp = Core.GetFrameCopy())
+            using (Bitmap bmp = Visualize.GetScreenCopy())
             {
                 using (Graphics g = Graphics.FromImage(bmp))
                 {

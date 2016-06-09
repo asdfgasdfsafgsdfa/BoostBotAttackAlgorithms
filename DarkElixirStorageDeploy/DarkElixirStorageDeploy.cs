@@ -41,7 +41,7 @@ namespace DarkElixirStorageDeploy
             var walls = Wall.Find();
             var darkElixirStorage = DarkElixirStorage.Find().FirstOrDefault();
 
-            using (var bmp = Core.GetFrameCopy())
+            using (var bmp = Visualize.GetScreenCopy())
             {
                 AutoRecycle.Remove(bmp);
                 Visualize.Grid(bmp);

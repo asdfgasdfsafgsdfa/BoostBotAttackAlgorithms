@@ -70,7 +70,7 @@ namespace SnipeDeploy
                 {
                     var th = TownHall.Find();
 
-                    using (var bmp = Core.GetFrameCopy())
+                    using (var bmp = Visualize.GetScreenCopy())
                     {
                         AutoRecycle.Remove(bmp);
                         Visualize.RectangleT(bmp, th.Location);
@@ -212,7 +212,7 @@ namespace SnipeDeploy
         {
             var th = TownHall.Find();
 
-            using (var bmp = Core.GetFrameCopy())
+            using (var bmp = Visualize.GetScreenCopy())
             {
                 AutoRecycle.Remove(bmp);
                 Visualize.Grid(bmp);

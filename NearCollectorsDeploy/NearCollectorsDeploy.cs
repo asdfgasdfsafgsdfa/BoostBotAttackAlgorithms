@@ -45,7 +45,7 @@ namespace NearCollectorsDeploy
             deployPoints.AddRange(analysisPoints);
 
             // Debug: show deploy points
-            using (var frame = Core.GetFrameCopy())
+            using (var frame = Visualize.GetScreenCopy())
             {
                 AutoRecycle.Remove(frame);
                 using (var g = Graphics.FromImage(frame))
