@@ -41,9 +41,8 @@ namespace DarkElixirStorageDeploy
             var walls = Wall.Find();
             var darkElixirStorage = DarkElixirStorage.Find().FirstOrDefault();
 
-            using (var bmp = Screenshot.Capture())
+            using (var bmp = Screenshot.Capture(true))
             {
-                AutoRecycle.Remove(bmp);
                 Visualize.Grid(bmp);
                 Visualize.Axes(bmp);
                 foreach (var wall in walls) Visualize.RectangleT(bmp, wall.Location, new Pen(Color.FromArgb(0xC0, 0x00, 0xFF, 0xFF), 1));

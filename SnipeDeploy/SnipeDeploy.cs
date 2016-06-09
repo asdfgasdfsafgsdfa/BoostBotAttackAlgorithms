@@ -70,9 +70,8 @@ namespace SnipeDeploy
                 {
                     var th = TownHall.Find();
 
-                    using (var bmp = Screenshot.Capture())
+                    using (var bmp = Screenshot.Capture(true))
                     {
-                        AutoRecycle.Remove(bmp);
                         Visualize.RectangleT(bmp, th.Location);
                         Visualize.RectangleT(bmp, new RectangleT((int) snipePoint.X, (int) snipePoint.Y, 1, 1));
                         var d = DateTime.UtcNow;

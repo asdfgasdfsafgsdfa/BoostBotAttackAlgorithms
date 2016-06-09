@@ -45,9 +45,8 @@ namespace NearCollectorsDeploy
             deployPoints.AddRange(analysisPoints);
 
             // Debug: show deploy points
-            using (var frame = Screenshot.Capture())
+            using (var frame = Screenshot.Capture(true))
             {
-                AutoRecycle.Remove(frame);
                 using (var g = Graphics.FromImage(frame))
                 {
                     foreach (var p in RedPoints)
