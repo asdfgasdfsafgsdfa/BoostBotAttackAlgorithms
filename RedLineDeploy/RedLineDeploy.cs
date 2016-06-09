@@ -149,7 +149,7 @@ namespace RedLineDeploy
                             (float)(point.Y + (point.Y / Math.Sqrt(point.DistanceSq(new PointFT(0, 0)))) * 4)))
                     .ToList();
 
-            using (Bitmap bmp = Visualize.GetScreenCopy())
+            using (Bitmap bmp = Screenshot.Capture())
             {
                 using (Graphics g = Graphics.FromImage(bmp))
                 {
@@ -160,7 +160,8 @@ namespace RedLineDeploy
                         Visualize.RectangleT(bmp, new RectangleT((int)redPoint.X, (int)redPoint.Y, 1, 1), new Pen(Color.FromArgb(128, Color.DarkBlue)));
                 }
                 var d = DateTime.UtcNow;
-                DebugTools.SaveDebugScreenshot($"RedLineDeploy {d.Year}-{d.Month}-{d.Day} {d.Hour}-{d.Minute}-{d.Second}-{d.Millisecond}", bmp);
+                Screenshot.Save(bmp,
+                    $"RedLineDeploy {d.Year}-{d.Month}-{d.Day} {d.Hour}-{d.Minute}-{d.Second}-{d.Millisecond}");
             }
         }
     }

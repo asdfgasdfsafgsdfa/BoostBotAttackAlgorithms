@@ -226,7 +226,7 @@ namespace BreakthroughCornerDeploy
 
         private void VisualizeDeployment()
         {
-            using (var bmp = Visualize.GetScreenCopy())
+            using (var bmp = Screenshot.Capture())
             {
                 using (var g = Graphics.FromImage(bmp))
                 {
@@ -252,7 +252,7 @@ namespace BreakthroughCornerDeploy
                         _ragePoint.ToScreenAbsolute().ToRectangle((int)distance, (int)distance));
                 }
                 var d = DateTime.UtcNow;
-                DebugTools.SaveDebugScreenshot($"Breakthrough Deploy {d.Year}-{d.Month}-{d.Day} {d.Hour}-{d.Minute}-{d.Second}-{d.Millisecond}", bmp);
+                Screenshot.Save(bmp, $"Breakthrough Deploy {d.Year}-{d.Month}-{d.Day} {d.Hour}-{d.Minute}-{d.Second}-{d.Millisecond}");
             }
         }
     }

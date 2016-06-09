@@ -41,7 +41,7 @@ namespace DarkElixirStorageDeploy
             var walls = Wall.Find();
             var darkElixirStorage = DarkElixirStorage.Find().FirstOrDefault();
 
-            using (var bmp = Visualize.GetScreenCopy())
+            using (var bmp = Screenshot.Capture())
             {
                 AutoRecycle.Remove(bmp);
                 Visualize.Grid(bmp);
@@ -49,7 +49,7 @@ namespace DarkElixirStorageDeploy
                 foreach (var wall in walls) Visualize.RectangleT(bmp, wall.Location, new Pen(Color.FromArgb(0xC0, 0x00, 0xFF, 0xFF), 1));
                 if (darkElixirStorage != null) Visualize.RectangleT(bmp, darkElixirStorage.Location, new Pen(Color.FromArgb(192, 85, 0, 255), 1));
                 var d = DateTime.UtcNow;
-                DebugTools.SaveDebugScreenshot($"DarkElixirStorageDeploy {d.Year}-{d.Month}-{d.Day} {d.Hour}-{d.Minute}-{d.Second}-{d.Millisecond}", bmp);
+                Screenshot.Save(bmp, $"DarkElixirStorageDeploy {d.Year}-{d.Month}-{d.Day} {d.Hour}-{d.Minute}-{d.Second}-{d.Millisecond}");
             }
         }
     }

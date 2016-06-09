@@ -70,13 +70,13 @@ namespace SnipeDeploy
                 {
                     var th = TownHall.Find();
 
-                    using (var bmp = Visualize.GetScreenCopy())
+                    using (var bmp = Screenshot.Capture())
                     {
                         AutoRecycle.Remove(bmp);
                         Visualize.RectangleT(bmp, th.Location);
                         Visualize.RectangleT(bmp, new RectangleT((int) snipePoint.X, (int) snipePoint.Y, 1, 1));
                         var d = DateTime.UtcNow;
-                        DebugTools.SaveDebugScreenshot($"Snipe Deploy {d.Year}-{d.Month}-{d.Day} {d.Hour}-{d.Minute}-{d.Second}-{d.Millisecond}", bmp);
+                        Screenshot.Save(bmp, $"Snipe Deploy_{d.Year}-{d.Month}-{d.Day}_{d.Hour}-{d.Minute}-{d.Second}");
                     }
                 }
 
@@ -212,14 +212,12 @@ namespace SnipeDeploy
         {
             var th = TownHall.Find();
 
-            using (var bmp = Visualize.GetScreenCopy())
+            using (var bmp = Screenshot.Capture())
             {
-                AutoRecycle.Remove(bmp);
                 Visualize.Grid(bmp);
                 Visualize.Axes(bmp);
-                Visualize.Rectangle(bmp, th.MatchedRectangle);
                 Visualize.RectangleT(bmp, th.Location);
-                DebugTools.DisplayDebugImage(bmp);
+                Screenshot.Show(bmp);
             }
         }
     }

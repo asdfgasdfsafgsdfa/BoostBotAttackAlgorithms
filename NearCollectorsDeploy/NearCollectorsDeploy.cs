@@ -45,7 +45,7 @@ namespace NearCollectorsDeploy
             deployPoints.AddRange(analysisPoints);
 
             // Debug: show deploy points
-            using (var frame = Visualize.GetScreenCopy())
+            using (var frame = Screenshot.Capture())
             {
                 AutoRecycle.Remove(frame);
                 using (var g = Graphics.FromImage(frame))
@@ -65,10 +65,9 @@ namespace NearCollectorsDeploy
                 }
 
                 if (UserSettings.SaveAttackAnalysisImage)
-                    DebugTools.SaveDebugScreenshot(
-                        $"AttackAnalysis_Dead {deployPoints.Count} points {RedPoints.Count} red", frame, false);
+                    Screenshot.Save(frame, $"AttackAnalysis_Dead {deployPoints.Count} points {RedPoints.Count} red");
                 if (UserSettings.DisplayAttackAnalysisImage)
-                    DebugTools.DisplayDebugImage(frame);
+                    Screenshot.Show(frame);
             }
 
 
