@@ -82,8 +82,7 @@ namespace NearCollectorsDeploy
 
             // Get outer border to move ranges towards there if possible
             List<Point> outerBorderPoints = DeployHelper.GetRectPoints(15);
-
-            Core.OverlayText = "[Deploy]\r\nDeploying units...";
+            
             if (surrenderOnFirstStar)
                 Logger.Info("[Deploy] Bot will surrender as soon as the first star is reached to save troops (Trophy Push Mode)");
 
@@ -235,7 +234,6 @@ namespace NearCollectorsDeploy
 
             if (heroes.Count > 0)
             {
-                Core.OverlayText = "[Attack]\r\nDeploy and activate heroes";
                 foreach (var y in DeployHeroes(heroes, _deployPoints))
                 {
                     if (surrenderOnFirstStar)

@@ -48,6 +48,7 @@ namespace FourSidesDeploy
 			points.Clear();
 			points.AddRange(right.OrderBy(p => p.Y));
 			points.AddRange(left.OrderByDescending(p => p.Y));
+            
 		}
 
 		public override IEnumerable<int> AttackRoutine()
@@ -63,8 +64,7 @@ namespace FourSidesDeploy
 
 			// Get outer border to move ranges towards there if possible
 			List<Point> outerBorderPoints = DeployHelper.GetRectPoints(15);
-
-			Core.OverlayText = "[Deploy]\r\nDeploying units...";
+            
 			if (_surrenderOnFirstStar)
 				Logger.Info("[Deploy] Bot will surrender as soon as the first star is reached to save troops (Trophy Push Mode)");
 
@@ -224,7 +224,6 @@ namespace FourSidesDeploy
 
 			if (heroes.Count > 0)
 			{
-				Core.OverlayText = "[Attack]\r\nDeploy and activate heroes";
 				foreach (var y in DeployHeroes(heroes, deployPoints))
 				{
 					if (_surrenderOnFirstStar)
@@ -236,7 +235,7 @@ namespace FourSidesDeploy
 			}
 
 			Logger.Info("[Deploy] Deploy done.");
-		}
+        }
 
 	}
 }
