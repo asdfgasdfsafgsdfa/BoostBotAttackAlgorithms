@@ -54,7 +54,7 @@ namespace NearStoragesDeploy
                 Logger.Info("[Deploy] Bot will surrender as soon as the first star is reached to save troops (Trophy Push Mode)");
 
 
-            var allDeployElements = AttackHelper.GetAvailableDeployElements();
+            var allDeployElements = Deploy.GetTroops();
 
             var heroes = allDeployElements
                 .Where(u => (UserSettings.UseKing && u.ElementType == DeployElementType.HeroKing)
@@ -71,7 +71,7 @@ namespace NearStoragesDeploy
             {
                 Logger.Debug("Scan Troops");
                 // Scan available troops
-                var units = AttackHelper.GetAvailableDeployElements()
+                var units = Deploy.GetTroops()
                     .Where(u => u.ElementType == DeployElementType.NormalUnit
                         || (UserSettings.UseKing && u.ElementType == DeployElementType.HeroKing)
                         || (UserSettings.UseQueen && u.ElementType == DeployElementType.HeroQueen)

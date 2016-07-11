@@ -54,6 +54,7 @@ namespace SixteenFingersDeploy
                 unitDeployElements.Where(
                     x => x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Wallbreak)
                     .ToArray();
+
             Dictionary<string, DeployElement[]> unitGroups = new Dictionary<string, DeployElement[]>()
             {
                 {"tank units", tankUnits},
@@ -62,7 +63,9 @@ namespace SixteenFingersDeploy
                 {"wallbreak units", wallbreakUnits},
             };
 
-            var heroList = allDeployElements.GetHereoes().ToList();
+            var heroesAndClanCastle =
+                allDeployElements.Extract(
+                    deployElement => deployElement.ElementType == DeployElementType.ClanTroops || deployElement.IsHero);
 
             PointFT left = new PointFT(PointFT.MinRedZoneX, PointFT.MaxRedZoneY);
             PointFT top = new PointFT(PointFT.MaxRedZoneX, PointFT.MaxRedZoneY);
@@ -85,11 +88,19 @@ namespace SixteenFingersDeploy
             }
 
             Logger.Info("[16 Fingers] Deploying heroes");
-            Tuple<PointFT, PointFT> heroSide = lines[new Random().Next(0, 3)];
-            Point[] heroPoint = { new PointFT((heroSide.Item1.X + heroSide.Item2.X) / 2, (heroSide.Item1.Y + heroSide.Item2.Y) / 2).ToScreenAbsolute() };
-            if (heroList.All(x => x != null))
-                foreach (var y in DeployHeroes(heroList, heroPoint))
-                    yield return y;
+            var heroPoint = new PointFT((lines[0].Item1.X + lines[0].Item2.X) / 2, (lines[0].Item1.Y + lines[0].Item2.Y) / 2);
+
+            foreach (var deployElement in heroesAndClanCastle.Where(deployElement => deployElement?.Count > 0))
+            {
+                Log.Info($"[16 Fingers] Deploying {deployElement.PrettyName}");
+                foreach (var delay in Deploy.AtPoint(new[] { deployElement }, heroPoint))
+                    yield return delay;
+                yield return (int)(UserSettings.WaveDelay * 1000);
+            }
+
+            // Remove clan castle before watching heroes
+            heroesAndClanCastle.ExtractOne(x => x.ElementType == DeployElementType.ClanTroops);
+            Deploy.WatchHeroes(heroesAndClanCastle);
 
             Logger.Info("[16 Fingers] Deploy done");
         }

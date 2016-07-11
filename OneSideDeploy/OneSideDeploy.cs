@@ -38,7 +38,7 @@ namespace OneSideDeploy
 
         public override IEnumerable<int> AttackRoutine()
         {
-            var allDeployElements = AttackHelper.GetAvailableDeployElements();
+            var allDeployElements = Deploy.GetTroops();
             
             List<Point> redPoints = new List<Point>();
             foreach (var s in AttackHelper.FindRedPoints(redPoints))
