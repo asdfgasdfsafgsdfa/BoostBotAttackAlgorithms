@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("BreakthroughCornerDeploy")]
+[assembly: AssemblyTitle("HumanBarchDeploy")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("BreakthroughCornerDeploy")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyProduct("HumanBarchDeploy")]
+[assembly: AssemblyCopyright("Copyright © Bert 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("396adceb-61c2-46b3-b86b-7bcf9d1e4eca")]
+[assembly: Guid("A77F23EC-CEA7-45E4-93E6-378DE83D11C6")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -67,9 +67,8 @@ namespace RedLineDeploy
                 {
                     foreach (
                         var t in
-                            Deploy.AtPoints(new[] {element},
-                                clockwisePoints.GetNth(GameGrid.RedPoints.Length/(double) element.Count).ToArray(),
-                                1))
+                            Deploy.AtPoints(element,
+                                clockwisePoints.GetNth(GameGrid.RedPoints.Length/(double) element.Count).ToArray()))
                         yield return t;
                 }
                 units.Recount();
@@ -83,9 +82,8 @@ namespace RedLineDeploy
                 {
                     foreach (
                         var t in
-                            Deploy.AtPoints(new[] { element },
-                                inflatedPoints.GetNth(GameGrid.RedPoints.Length / (double)element.Count).ToArray(),
-                                1))
+                            Deploy.AtPoints(element,
+                                inflatedPoints.GetNth(GameGrid.RedPoints.Length/(double) element.Count).ToArray()))
                         yield return t;
                 }
                 ranged.Recount();
@@ -95,7 +93,7 @@ namespace RedLineDeploy
             if (cc.Count > 0 && UserSettings.UseClanTroops)
             {
                 Log.Info("[Red Line] Deploying the clan castle");
-                foreach (var y in Deploy.AtPoint(cc.ToArray(), new PointFT(x: GameGrid.MinX, y: GameGrid.MinY), 1))
+                foreach (var y in Deploy.AtPoint(cc.ToArray(), new PointFT(x: GameGrid.MinX, y: GameGrid.MinY)))
                     yield return y;
             }
 

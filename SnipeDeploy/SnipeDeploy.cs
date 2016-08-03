@@ -61,7 +61,7 @@ namespace SnipeDeploy
             if (hero != null)
             {
                 Log.Info("[Snipe Deploy] Deploying the " + hero.PrettyName + " to snipe.");
-                foreach (var t in Deploy.AtPoint(new[] { hero }, snipePoint, 1))
+                foreach (var t in Deploy.AtPoint(hero, snipePoint))
                     yield return t;
 
                 hero.Recount();
@@ -79,12 +79,7 @@ namespace SnipeDeploy
                     }
                 }
 
-                var timeOut = new Countdown(5);
-
-                while (timeOut.IsRunning)
-                {
-                    yield return 100;
-                }
+                yield return 5000;
 
                 Deploy.WatchHeroes(new List<DeployElement> {hero});
 
@@ -92,10 +87,9 @@ namespace SnipeDeploy
                 
                 if(hero.Count < 1)
                     while (countdown.IsRunning)
-                        if (Attack.SurrenderIfWeHaveAStar())
-                            yield break;
-                else
-                    Log.Info("[Snipe Deploy] Hero failed to deploy; trying to use troops");
+                        if (Attack.SurrenderIfWeHaveAStar()) yield break;
+                        else yield return 200;
+                else Log.Info("[Snipe Deploy] Hero failed to deploy; trying to use troops");
             }
 
             var snipeTroops =
@@ -150,60 +144,60 @@ namespace SnipeDeploy
                 if (distanceLeft == distanceTop)
                 {
                     Log.Debug("[Snipe Deploy] Townhall is closest to the west.");
-                    return new PointFT(GameGrid.MinX - 3, GameGrid.MaxY + 3);
+                    return new PointFT(PointFT.MinGameGridX - 3, PointFT.MaxGameGridY + 3);
                 }
                 if (distanceLeft == distanceBottom)
                 {
                     Log.Debug("[Snipe Deploy] Townhall is closest to the south.");
-                    return new PointFT(GameGrid.MinX - 3, GameGrid.MinY - 3);
+                    return new PointFT(PointFT.MinGameGridX - 3, PointFT.MinGameGridY - 3);
                 }
                 Log.Debug("[Snipe Deploy] Townhall is closest to the southwest.");
-                return new PointFT(GameGrid.MinX - 3, location.GetCenter().Y);
+                return new PointFT(PointFT.MinGameGridX - 3, location.GetCenter().Y);
             }
             else if (min == distanceRight)
             {
                 if (distanceRight == distanceTop)
                 {
                     Log.Debug("[Snipe Deploy] Townhall is closest to the north.");
-                    return new PointFT(GameGrid.MaxX + 3, GameGrid.MaxY + 3);
+                    return new PointFT(PointFT.MaxGameGridX + 3, PointFT.MaxGameGridY + 3);
                 }
                 if (distanceRight == distanceBottom)
                 {
                     Log.Debug("[Snipe Deploy] Townhall is closest to the east.");
-                    return new PointFT(GameGrid.MaxX + 3, GameGrid.MinY - 3);
+                    return new PointFT(PointFT.MaxGameGridX + 3, PointFT.MinGameGridY - 3);
                 }
                 Log.Debug("[Snipe Deploy] Townhall is closest to the northeast.");
-                return new PointFT(GameGrid.MaxX + 3, location.GetCenter().Y);
+                return new PointFT(PointFT.MaxGameGridX + 3, location.GetCenter().Y);
             }
             else if (min == distanceTop)
             {
                 if (distanceTop == distanceLeft)
                 {
                     Log.Debug("[Snipe Deploy] Townhall is closest to the west.");
-                    return new PointFT(GameGrid.MinX - 3, GameGrid.MaxY + 3);
+                    return new PointFT(PointFT.MinGameGridX - 3, PointFT.MaxGameGridY + 3);
                 }
                 if (distanceTop == distanceRight)
                 {
                     Log.Debug("[Snipe Deploy] Townhall is closest to the north.");
-                    return new PointFT(GameGrid.MaxX + 3, GameGrid.MaxY + 3);
+                    return new PointFT(PointFT.MaxGameGridX + 3, PointFT.MaxGameGridY + 3);
                 }
                 Log.Debug("[Snipe Deploy] Townhall is closest to the northwest.");
-                return new PointFT(location.GetCenter().X, GameGrid.MaxY + 3);
+                return new PointFT(location.GetCenter().X, PointFT.MaxGameGridY + 3);
             }
             else //if (min == distanceBottom)
             {
                 if (distanceBottom == distanceLeft)
                 {
                     Log.Debug("[Snipe Deploy] Townhall is closest to the south.");
-                    return new PointFT(GameGrid.MinX - 3, GameGrid.MinY - 3);
+                    return new PointFT(PointFT.MinGameGridX - 3, PointFT.MinGameGridY - 3);
                 }
                 if (distanceBottom == distanceRight)
                 {
                     Log.Debug("[Snipe Deploy] Townhall is closest to the east.");
-                    return new PointFT(GameGrid.MaxX + 3, GameGrid.MinY - 3);
+                    return new PointFT(PointFT.MaxGameGridX + 3, PointFT.MinGameGridY - 3);
                 }
                 Log.Debug("[Snipe Deploy] Townhall is closest to the southeast.");
-                return new PointFT(location.GetCenter().X, GameGrid.MinY - 3);
+                return new PointFT(location.GetCenter().X, PointFT.MinGameGridY - 3);
             }
         }
 

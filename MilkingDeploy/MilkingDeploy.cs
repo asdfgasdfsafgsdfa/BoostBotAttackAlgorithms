@@ -93,14 +93,14 @@ namespace MilkingDeploy
 
                 if (tankUnits.Any())
                 {
-                    foreach (var t in Deploy.AtPoints(tankUnits, deployPoints, 1))
+                    foreach (var t in Deploy.AtPoints(tankUnits, deployPoints))
                         yield return t;
                     yield return 1000;
                 }
 
                 if (attackUnits.Any())
                 {
-                    foreach (var t in Deploy.AtPoints(attackUnits, deployPoints))
+                    foreach (var t in Deploy.AtPoints(attackUnits, deployPoints, 6))
                         yield return t;
                     yield return 1000;
                 }
