@@ -26,8 +26,9 @@ namespace BreakthroughDeploy
         public override double ShouldAccept()
         {
             // For Debugging
-            // CreateDeployPoints();
-            // VisualizeDeployment();
+            //CreateDeployPoints(true);
+            //VisualizeDeployment();
+            //return 0;
 
             return Opponent.MeetsRequirements(BaseRequirements.All) ? 1 : 0;
         }
@@ -54,8 +55,8 @@ namespace BreakthroughDeploy
         {
             Log.Info("[Breakthrough] Deploy start");
 
-            var waveTroopNames = new[] { "Archer", "Barbarian", "Minion" };
-            var allByLineNames = new[] { "Wizard", "Balloon", "Dragon", "Baby Dragon", "Miner" };
+            var waveTroopNames = new[] { "Archer", "Barbarian", "Minion", "Wizard" };
+            var allByLineNames = new[] { "Balloon", "Dragon", "Baby Dragon", "Miner" };
 
             // TODO: Update once pekka is fixed in data.bin
             var allByPointNames = new[] { "Valkyrie", "pekka", "Witch", "Goblin" };
@@ -142,29 +143,17 @@ namespace BreakthroughDeploy
                 CreateDeployPoints(false);
             }
 
+            var funnelTank = tanks.FirstOrDefault(u => u.PrettyName == "Giant") ?? tanks.FirstOrDefault();
 
-            // deploy two tanks
-            foreach (var unit in tanks.Where(u => u.Count > 1))
+            // deploy four tanks if available
+            if(funnelTank != null)
             {
-                Log.Info($"[Breakthrough] Deploying {unit.PrettyName} x2");
-                foreach (var t in Deploy.AtPoints(unit, _tankPoints, waveDelay: waveDelay))
+                var deployCount = Math.Min(funnelTank.Count, 4);
+
+                Log.Info($"[Breakthrough] Deploying {funnelTank.PrettyName} x{deployCount}");
+                foreach (var t in Deploy.AlongLine(funnelTank, _attackLine.Item1, _attackLine.Item2, deployCount, 
+                    deployCount, waveDelay: waveDelay))
                     yield return t;
-            }
-
-            // deploy Wallbreakers
-            while (wallBreakers?.Count > 0)
-            {
-                var count = wallBreakers.Count;
-
-                Log.Info($"[Breakthrough] Deploying {wallBreakers.PrettyName} x3");
-                foreach (var t in Deploy.AtPoint(wallBreakers, _orgin, 3))
-                    yield return t;
-
-                // prevent infinite loop if deploy point is on red
-                if (wallBreakers.Count != count) continue;
-
-                Log.Warning($"[Breakthrough] Couldn't deploy {wallBreakers.PrettyName}");
-                break;
             }
 
             // deploy funnel waves
@@ -183,6 +172,23 @@ namespace BreakthroughDeploy
                         yield return t;
                 }
             }
+
+            // deploy Wallbreakers
+            while (wallBreakers?.Count > 0)
+            {
+                var count = wallBreakers.Count;
+
+                Log.Info($"[Breakthrough] Deploying {wallBreakers.PrettyName} x3");
+                foreach (var t in Deploy.AtPoint(wallBreakers, _orgin, 3))
+                    yield return t;
+
+                // prevent infinite loop if deploy point is on red
+                if (wallBreakers.Count != count) continue;
+
+                Log.Warning($"[Breakthrough] Couldn't deploy {wallBreakers.PrettyName}");
+                break;
+            }
+            
 
             // deploy the rest of the tanks
             while (tanks.Any(u => u.Count > 0))
@@ -213,10 +219,10 @@ namespace BreakthroughDeploy
                 {
                     Log.Info($"[Breakthrough] Deploying {unit.PrettyName} x{unit.Count}");
                     foreach (
-                        var delay in
+                        var t in
                             Deploy.AlongLine(unit, _attackLine.Item1, _attackLine.Item2, unit.Count, 4,
                                 waveDelay: waveDelay))
-                        yield return delay;
+                        yield return t;
                 }
             }
 
@@ -456,6 +462,11 @@ namespace BreakthroughDeploy
 
                     g.FillEllipse(new SolidBrush(Color.FromArgb(128, Color.Magenta)),
                         _ragePoint.ToScreenAbsolute().ToRectangle((int)distance, (int)distance));
+
+                    g.FillEllipse(new SolidBrush(Color.FromArgb(128, Color.Magenta)),
+                        _queenRagePoint.ToScreenAbsolute().ToRectangle((int)distance, (int)distance));
+
+                    g.FillEllipse(Brushes.Blue, _qwPoint.ToScreenAbsolute().ToRectangle(3, 3));
                 }
                 var d = DateTime.UtcNow;
                 Screenshot.Save(bmp, $"Breakthrough Deploy {d.Year}-{d.Month}-{d.Day} {d.Hour}-{d.Minute}-{d.Second}-{d.Millisecond}");

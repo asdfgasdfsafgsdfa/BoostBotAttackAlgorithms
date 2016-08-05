@@ -24,7 +24,7 @@ namespace MilkingDeploy
 
         public override string ToString()
         {
-            return "Milking Deploy (beta)";
+            return "Milking Deploy";
         }
 
         public override double ShouldAccept()
