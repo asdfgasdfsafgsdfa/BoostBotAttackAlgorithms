@@ -117,8 +117,8 @@ namespace HumanBarchDeploy
                 var deployElements = allElements.Where(x => x.UnitData != null).ToArray();
                 var rangedUnits = deployElements.Where(x => x.IsRanged == true && x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Damage);
                 var gruntUnits = deployElements.Where(x => x.IsRanged == false && x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Damage);
-                List<DeployElement> king = allElements.Where(x => x.IsHero && x.Name.ToLower().Contains("king")).ToList();
-                List<DeployElement> queen = allElements.Where(x => x.IsHero && x.Name.ToLower().Contains("queen")).ToList();
+                List<DeployElement> king = allElements.Where(x => x.Id == DeployId.King).ToList();
+                List<DeployElement> queen = allElements.Where(x => x.Id == DeployId.Queen).ToList();
 
                 //Dont Deploy any Tank Units... even if we have them.
 

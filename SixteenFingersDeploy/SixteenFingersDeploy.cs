@@ -4,6 +4,7 @@ using System.Linq;
 using CoC_Bot;
 using CoC_Bot.API;
 using System.Drawing;
+using CoC_Bot.Modules.Helpers;
 
 [assembly: Addon("SixteenFingersDeploy", "4-fingers deploy simultaneously at all 4 sides", "AngryDog")]
 namespace SixteenFingersDeploy
@@ -36,36 +37,20 @@ namespace SixteenFingersDeploy
             // Get all the units available
             Log.Debug("Scanning troops");
 
-            var allDeployElements = Attack.GetAvailableDeployElements();
-            var unitDeployElements = allDeployElements.Where(x => x.UnitData != null).ToArray();
-            var tankUnits =
-                unitDeployElements.Where(
-                    x => x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Tank)
-                    .ToArray();
-            var attackUnits =
-                unitDeployElements.Where(
-                    x => x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Damage)
-                    .ToArray();
-            var healUnits =
-                unitDeployElements.Where(
-                    x => x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Heal)
-                    .ToArray();
-            var wallbreakUnits =
-                unitDeployElements.Where(
-                    x => x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Wallbreak)
-                    .ToArray();
+            var unitDeployElements = Deploy.GetTroops();
 
-            Dictionary<string, DeployElement[]> unitGroups = new Dictionary<string, DeployElement[]>()
+            // remove spells
+            unitDeployElements.Extract(DeployElementType.Spell);
+
+            var heroesAndClanCastle = unitDeployElements.Extract(u => u.IsHero || u.Id == DeployId.ClanCastle);
+
+            var unitGroups = new Dictionary<string, DeployElement[]>
             {
-                {"tank units", tankUnits},
-                {"attack units", attackUnits},
-                {"heal units", healUnits},
-                {"wallbreak units", wallbreakUnits},
+                {"tank units", unitDeployElements.Extract(AttackType.Tank).ToArray()},
+                {"attack units", unitDeployElements.Extract(AttackType.Damage).ToArray()},
+                {"heal units", unitDeployElements.Extract(AttackType.Heal).ToArray()},
+                {"wallbreak units", unitDeployElements.Extract(AttackType.Wallbreak).ToArray()},
             };
-
-            var heroesAndClanCastle =
-                allDeployElements.Extract(
-                    deployElement => deployElement.ElementType == DeployElementType.ClanTroops || deployElement.IsHero);
 
             PointFT left = new PointFT(PointFT.MinRedZoneX, PointFT.MaxRedZoneY);
             PointFT top = new PointFT(PointFT.MaxRedZoneX, PointFT.MaxRedZoneY);
@@ -88,15 +73,9 @@ namespace SixteenFingersDeploy
             }
 
             Logger.Info("[16 Fingers] Deploying heroes");
-            var heroPoint = new PointFT((lines[0].Item1.X + lines[0].Item2.X) / 2, (lines[0].Item1.Y + lines[0].Item2.Y) / 2);
-
-            foreach (var deployElement in heroesAndClanCastle.Where(deployElement => deployElement?.Count > 0))
-            {
-                Log.Info($"[16 Fingers] Deploying {deployElement.PrettyName}");
-                foreach (var delay in Deploy.AtPoint(new[] { deployElement }, heroPoint))
-                    yield return delay;
-                yield return (int)(UserSettings.WaveDelay * 1000);
-            }
+            var heroPoint = new Container<PointFT> {Item = new PointFT((lines[0].Item1.X + lines[0].Item2.X)/2, (lines[0].Item1.Y + lines[0].Item2.Y)/2)};
+            foreach (var delay in Deploy.AtPoint(heroesAndClanCastle.Where(d => d?.Count > 0).ToArray(), heroPoint, 1, 0, (int)(UserSettings.WaveDelay * 1000)))
+                yield return delay;
 
             // Remove clan castle before watching heroes
             heroesAndClanCastle.ExtractOne(x => x.ElementType == DeployElementType.ClanTroops);

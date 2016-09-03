@@ -58,10 +58,10 @@ namespace MilkingDeploy
             // Get all the units available
             Log.Debug("Scanning troops");
             var deployElements = Deploy.GetTroops();
-            var spells = deployElements.Extract(u => u.ElementType == DeployElementType.Spell);
-            var tankUnits = deployElements.Where(x => x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Tank).ToArray();
-            var attackUnits = deployElements.Where(x => x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Damage).ToArray();
-            var healUnits = deployElements.Where(x => x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Heal).ToArray();
+            var spells = deployElements.Extract(DeployElementType.Spell);
+            var tankUnits = deployElements.Extract(AttackType.Tank).ToArray();
+            var attackUnits = deployElements.Extract(AttackType.Damage).ToArray();
+            var healUnits = deployElements.Extract(AttackType.Heal).ToArray();
 
             var waveCounter = 1;
 
@@ -147,7 +147,7 @@ namespace MilkingDeploy
             foreach (var t in Attack.WaitForNoResourceChange(10))
                 yield return t;
 
-            if (spells.Any(spell => spell.PrettyName == "Lightning") && DarkElixirDrill.Find(CacheBehavior.ForceScan, 4).Length > 0)
+            if (spells.Any(u => u.Id == DeployId.Lightning) && DarkElixirDrill.Find(CacheBehavior.ForceScan, 4).Length > 0)
             {
                 Log.Debug("Level 4 or greater drills found, waiting for attack to finish.");
                 foreach (var t in Attack.WaitForNoResourceChange(5))

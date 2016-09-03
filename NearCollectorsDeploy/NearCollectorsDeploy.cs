@@ -137,7 +137,7 @@ namespace NearCollectorsDeploy
                         continue;
 
                     // Select unit
-                    Logger.Debug("[Deploy] Deploying '{0}' (x{1})", u.Name, u.Count);
+                    Logger.Debug("[Deploy] Deploying '{0}'", u);
                     u.Select();
 
                     // Deploy them
@@ -214,11 +214,11 @@ namespace NearCollectorsDeploy
                         Logger.Debug("RecountB");
 
                         if (countA != countB)
-                            Logger.Info("Recount of '{0}'. {1}->{2}", u.Name, countA, countB);
+                            Logger.Info("Recount of '{0}'. {1}->{2}", u.PrettyName, countA, countB);
 
                         if (u.Count <= 0)
                         {
-                            Logger.Info("Unit '{0}' depleted. Break.", u.Name);
+                            Logger.Info("Unit '{0}' depleted. Break.", u.PrettyName);
                             yield return 500;
                             break;
                         }

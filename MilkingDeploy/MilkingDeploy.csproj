@@ -21,7 +21,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\CoC Bot.Main\bin\Debug\Addons\MilkingDeploy\</OutputPath>
+    <OutputPath>..\..\CoC Bot.Main\bin\Debug\Addons\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\CoC Bot.Main\bin\Release\Addons\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -59,10 +59,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if "$(ConfigurationName)" == "Release" xcopy /y /e /i "$(ProjectDir)*.*" "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\MilkingDeploy\Source"
-if "$(ConfigurationName)" == "Release" del /q "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\MilkingDeploy\Source\*.vspscc"
-if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\MilkingDeploy\Source\obj"
-if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\MilkingDeploy\Source\bin"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

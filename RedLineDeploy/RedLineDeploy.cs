@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using CoC_Bot;
 using CoC_Bot.API;
+using CoC_Bot.Modules.Helpers;
 
 [assembly: Addon("RedLineDeploy", "Deploy troops along the red line", "Kloc")]
 namespace RedLineDeploy
@@ -35,16 +36,13 @@ namespace RedLineDeploy
             Log.Info("[Red Line] Attack start");
 
             var deplyElements = Deploy.GetTroops();
-            var spells = deplyElements.Extract(u => u.ElementType == DeployElementType.Spell);
-            var bk = deplyElements.Extract(u => u.ElementType == DeployElementType.HeroKing);
-            var aq = deplyElements.Extract(u => u.ElementType == DeployElementType.HeroQueen);
-            var gw = deplyElements.Extract(u => u.ElementType == DeployElementType.HeroWarden);
-            var cc = deplyElements.Extract(u => u.ElementType == DeployElementType.ClanTroops);
+            var spells = deplyElements.Extract(DeployElementType.Spell);
+            var bk = deplyElements.ExtractOne(DeployId.King);
+            var aq = deplyElements.ExtractOne(DeployId.Queen);
+            var gw = deplyElements.ExtractOne(DeployId.Warden);
+            var cc = deplyElements.ExtractOne(DeployId.ClanCastle);
             var ranged = deplyElements.Extract(u => u.IsRanged);
-            var units = deplyElements
-                    .Where(element => element.ElementType != DeployElementType.Spell)
-                    .OrderBy(element => element.UnitData?.AttackType != AttackType.Tank)
-                    .ToList();
+            var units = deplyElements.OrderBy(u => u.UnitData?.AttackType != AttackType.Tank).ToList();
 
             var clockwisePoints = GameGrid.RedPoints
                 .Where(
@@ -89,11 +87,12 @@ namespace RedLineDeploy
                 ranged.Recount();
                 ranged.RemoveAll(unit => unit.Count < 1);
             }
-            
+
+            var pt = new Container<PointFT> {Item = new PointFT((float) GameGrid.MinX, GameGrid.MinY)};
             if (cc.Count > 0 && UserSettings.UseClanTroops)
             {
                 Log.Info("[Red Line] Deploying the clan castle");
-                foreach (var y in Deploy.AtPoint(cc.ToArray(), new PointFT(x: GameGrid.MinX, y: GameGrid.MinY)))
+                foreach (var y in Deploy.AtPoint(cc, pt))
                     yield return y;
             }
 
@@ -101,25 +100,25 @@ namespace RedLineDeploy
 
             if (bk.Count > 0 && UserSettings.UseKing)
             {
-                heroes.AddRange(bk);
+                heroes.Add(bk);
                 Log.Info("[Red Line] Deploying the Barbarian King");
-                foreach (var y in Deploy.AtPoint(bk.ToArray(), new PointFT(x: GameGrid.MinX, y: GameGrid.MinY), 1))
+                foreach (var y in Deploy.AtPoint(bk, pt))
                     yield return y;
             }
 
             if (aq.Count > 0 && UserSettings.UseQueen)
             {
-                heroes.AddRange(aq);
+                heroes.Add(aq);
                 Log.Info("[Red Line] Deploying the Archer Queen");
-                foreach (var y in Deploy.AtPoint(aq.ToArray(), new PointFT(x: GameGrid.MinX, y: GameGrid.MinY), 1))
+                foreach (var y in Deploy.AtPoint(aq, pt))
                     yield return y;
             }
 
             if (gw.Count > 0 && UserSettings.UseWarden)
             {
-                heroes.AddRange(gw);
+                heroes.Add(gw);
                 Log.Info("[Red Line] Deploying the Grand Warden");
-                foreach (var y in Deploy.AtPoint(gw.ToArray(), new PointFT(x: GameGrid.MinX, y: GameGrid.MinY), 1))
+                foreach (var y in Deploy.AtPoint(gw, pt))
                     yield return y;
             }
 

@@ -5,6 +5,7 @@ using CoC_Bot;
 using CoC_Bot.Internals;
 using CoC_Bot.API;
 using CoC_Bot.API.Buildings;
+using CoC_Bot.Modules.Helpers;
 using JetBrains.Annotations;
 using TargetType = CoC_Bot.TargetType;
 
@@ -50,9 +51,9 @@ namespace SnipeDeploy
         public override IEnumerable<int> AttackRoutine()
         {
             Log.Debug("[Snipe Deploy] Getting the best townhall deploy point.");
-            var snipePoint = GetTownHallDeployPoint();
+            var snipePoint = new Container<PointFT> {Item = GetTownHallDeployPoint()};
 
-            Log.Debug($"[Snipe Deploy] Deploy point is ({snipePoint.X}, {snipePoint.Y})");
+            Log.Debug($"[Snipe Deploy] Deploy point is ({snipePoint.Item})");
 
             var troops = Deploy.GetTroops();
 
@@ -73,7 +74,7 @@ namespace SnipeDeploy
                     using (var bmp = Screenshot.Capture(true))
                     {
                         Visualize.RectangleT(bmp, th.Location);
-                        Visualize.RectangleT(bmp, new RectangleT((int) snipePoint.X, (int) snipePoint.Y, 1, 1));
+                        Visualize.RectangleT(bmp, new RectangleT((int) snipePoint.Item.X, (int) snipePoint.Item.Y, 1, 1));
                         var d = DateTime.UtcNow;
                         Screenshot.Save(bmp, $"Snipe Deploy_{d.Year}-{d.Month}-{d.Day}_{d.Hour}-{d.Minute}-{d.Second}");
                     }
@@ -103,7 +104,7 @@ namespace SnipeDeploy
                 Log.Info("[Snipe Deploy] Deploying troops to snipe.");
 
                 var countdown = new Countdown(15.0, true);
-
+                var pt = new Container<PointFT> {Item = GetTownHallDeployPoint()};
                 while (true)
                 {
                     if (countdown.IsFinished)
