@@ -34,45 +34,23 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ClashBot">
-      <HintPath>..\..\ClashBot.exe</HintPath>
+      <HintPath>..\..\CoC Bot.Main\bin\ClashBot.exe</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="CoC Bot.Core">
       <HintPath>..\..\CoC Bot.Main\bin\CoC Bot.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Shared">
-      <HintPath>..\..\Shared.dll</HintPath>
+      <HintPath>..\..\CoC Bot.Main\bin\Shared.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HumanLikeAlgorithms.cs" />
@@ -81,18 +59,9 @@
     <Compile Include="Rand.cs" />
     <Compile Include="Target.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CoC Bot.Main\CoC Bot.Main.csproj">
-      <Project>{56C3730E-D493-414A-A478-7704D6391159}</Project>
-      <Name>CoC Bot.Main</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if "$(ConfigurationName)" == "Release" xcopy /y /e /i "$(ProjectDir)*.*" "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\MilkingDeploy\Source"
+    <PostBuildEvent>if "$(ConfigurationName)" == "Release" xcopy /y /e /i "$(ProjectDir)*.*" "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\HumanBarchDeploy\Source"
 if "$(ConfigurationName)" == "Release" del /q "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\HumanBarchDeploy\Source\*.vspscc"
 if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\..\CoC Bot.Main\bin\Release\Addons\HumanBarchDeploy\Source\obj"
 if "$(ConfigurationName)" == "Release" rmdir /s /q "$(ProjectDir)..\CoC Bot.Main\bin\Release\Addons\HumanBarchDeploy\Source\bin"</PostBuildEvent>

@@ -1,10 +1,5 @@
 ﻿using CoC_Bot.API;
 using CoC_Bot.API.Buildings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharedCode
 {
