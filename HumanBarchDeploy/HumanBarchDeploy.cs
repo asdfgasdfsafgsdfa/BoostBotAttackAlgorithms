@@ -4,9 +4,8 @@ using System.Linq;
 using CoC_Bot;
 using CoC_Bot.API;
 using CoC_Bot.API.Buildings;
-using CoC_Bot.Internals;
-using System.Threading;
 using SharedCode;
+using System.Reflection;
 
 [assembly: Addon("HumanBarchDeploy Addon", "Contains the Human Barch deploy algorithm", "Bert")]
 
@@ -21,37 +20,63 @@ namespace HumanBarchDeploy
         private float _thDeployRadius = 1.2f;
         private float _collectorDeployRadius = 1.4f;
 
+        private bool IgnoreGold { get; set; }
+        private bool IgnoreElixir { get; set; }
+
         public HumanBarchDeploy(Opponent opponent) : base(opponent) { }
 
         public override string ToString()
         {
-            return "Humanlike Barch Deploy";
+            return "Human Barch Deploy";
         }
 
         public override double ShouldAccept()
         {
             int returnVal = 0;
 
-            // set flags to only check elixir and gold against the user's settings
-            var requirementsToCheck = BaseRequirements.Elixir | BaseRequirements.Gold;
-
-            // check if the base meets the user's requirements
-            if (!Opponent.MeetsRequirements(requirementsToCheck))
+            // check if the base meets ALL the user's requirements
+            if (!Opponent.MeetsRequirements(BaseRequirements.All))
             {
-                return returnVal;
+                return 0;
             }
 
             //Check if the base is dead.
             if (Opponent.IsDead(true))
             {
-                //Check how many Collectors are Ripe for the taking (outside walls)
-                int ripeCollectors = HumanLikeAlgorithms.CountRipeCollectors(_minimumDistanceToCollectors);
 
-                Log.Info($"[Human Barch] {ripeCollectors} collectors found outside walls.");
-
-                if (ripeCollectors < _minimumExposedTargets)
+                //Check to see if the settings are favoring Gold or Elixir.. (if a resource is set to ZERO, Ignore that resource when searching for targets)
+                if (!UserSettings.DeadSearch.NeedsOnlyOneRequirementForAttack)
                 {
-                    Log.Info($"[Human Barch] Skipping - {ripeCollectors} collectors were found outside the wall");
+                    IgnoreGold = (UserSettings.DeadSearch.MinGold == 0);
+                    IgnoreElixir = (UserSettings.DeadSearch.MinElixir == 0);
+                }
+
+                var minTargets = _minimumExposedTargets;
+
+                //If ignoring Gold, Reduce the min required targets by half.
+                if (IgnoreGold)
+                {
+                    Log.Info($"[Human Barch] Minimum Gold = 0  - Ignoring Gold Storages/Collectors");
+                    minTargets = (int)Math.Floor(Convert.ToDouble(minTargets) / 2d);
+                }
+
+                //If ignoring Gold, Reduce the min required targets by half.
+                if (IgnoreElixir)
+                {
+                    Log.Info($"[Human Barch] Minimum Elixir = 0  - Ignoring Elixir Storages/Collectors");
+                    minTargets = (int)Math.Floor(Convert.ToDouble(minTargets) / 2d); ;
+                }
+                if (minTargets == 0)
+                    minTargets = 1; //if Gold AND Elixir are Ignored, there should be at least 1 target (DE) in order to attack.
+
+                //Check how many Collectors are Ripe for the taking (outside walls)
+                int ripeCollectors = HumanLikeAlgorithms.CountRipeCollectors(_minimumDistanceToCollectors, IgnoreGold, IgnoreElixir);
+
+                Log.Info($"[Human Barch] {ripeCollectors} targets found outside walls. Min={minTargets}");
+
+                if (ripeCollectors < minTargets)
+                {
+                    Log.Info($"[Human Barch] Skipping - {ripeCollectors} targets were found outside the wall. Min={minTargets}");
                     returnVal = 0;
                 }
                 else
@@ -61,6 +86,13 @@ namespace HumanBarchDeploy
             }
             else
             {
+                //Check to see if the settings are favoring Gold or Elixir.. (if a resource is set to ZERO, Ignore that resource when searching for targets)
+                if (!UserSettings.ActiveSearch.NeedsOnlyOneRequirementForAttack)
+                {
+                    IgnoreGold = (UserSettings.ActiveSearch.MinGold == 0);
+                    IgnoreElixir = (UserSettings.ActiveSearch.MinElixir == 0);
+                }
+
                 TownHall townHall = TownHall.Find(CacheBehavior.Default);
 
                 if (townHall.CanSnipe())
@@ -82,7 +114,7 @@ namespace HumanBarchDeploy
 
         public override IEnumerable<int> AttackRoutine()
         {
-            Log.Debug("[Human Barch] Deploy start");
+            Log.Info($"[Human Barch] Deploy start - V.{Assembly.GetExecutingAssembly().GetName().Version.ToString()}");
 
             var waveCounter = 1;
 
@@ -117,8 +149,13 @@ namespace HumanBarchDeploy
                 var deployElements = allElements.Where(x => x.UnitData != null).ToArray();
                 var rangedUnits = deployElements.Where(x => x.IsRanged == true && x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Damage);
                 var gruntUnits = deployElements.Where(x => x.IsRanged == false && x.ElementType == DeployElementType.NormalUnit && x.UnitData.AttackType == AttackType.Damage);
-                List<DeployElement> king = allElements.Where(x => x.Id == DeployId.King).ToList();
-                List<DeployElement> queen = allElements.Where(x => x.Id == DeployId.Queen).ToList();
+                List<DeployElement> king = allElements.Where(x => x.IsHero && x.Name.ToLower().Contains("king")).ToList();
+                List<DeployElement> queen = allElements.Where(x => x.IsHero && x.Name.ToLower().Contains("queen")).ToList();
+                List<DeployElement> allHeroes = new List<DeployElement>();
+                allHeroes.AddRange(king);
+                allHeroes.AddRange(queen);
+
+                bool watchHeroes = false;
 
                 //Dont Deploy any Tank Units... even if we have them.
 
@@ -150,23 +187,35 @@ namespace HumanBarchDeploy
 
                         //If we dont have a star yet, Drop the King...
                         if (!Attack.HaveAStar())
-                        {
+                        { 
                             if (UserSettings.UseKing && king.Any())
                             {
                                 Log.Info($"[Human Barch] Deploying King at: X:{townHallTarget.DeployGrunts.X} Y:{townHallTarget.DeployGrunts.Y}");
-                                foreach (var t in DeployHeroes(king, townHallTarget.DeployGrunts.ToScreenAbsolute().ToEnumerable(), false))
-                                    yield return t;
+                                foreach(var t in Deploy.AtPoint(king[0], townHallTarget.DeployGrunts))
+                                        yield return t;
                                 yield return Rand.Int(900, 1000); //Wait 
+
+                                watchHeroes = true;
+                                
                             }
 
                             //Deploy the Queen
                             if (UserSettings.UseQueen && queen.Any())
                             {
                                 Log.Info($"[Human Barch] Deploying Queen at: X:{townHallTarget.DeployRanged.X} Y:{townHallTarget.DeployRanged.Y}");
-                                foreach (var t in DeployHeroes(queen, townHallTarget.DeployRanged.ToScreenAbsolute().ToEnumerable(), false))
+                                foreach (var t in Deploy.AtPoint(queen[0], townHallTarget.DeployRanged))
                                     yield return t;
-                                yield return Rand.Int(900, 1000); //Wait 
+                                yield return Rand.Int(900, 1000); //Wait
+                                
+                                watchHeroes = true;
                             }
+
+                            if (watchHeroes) {
+                                //Watch Heros and Hit ability when they get low.
+                                Deploy.WatchHeroes(allHeroes);
+                                watchHeroes = false; //Only do this once through the loop.
+                            }
+
                         }
 
                         //Only try once to snipe the town hall when deploying waves.
@@ -177,7 +226,7 @@ namespace HumanBarchDeploy
                 else
                 {
                     //First time through use cached... after the first wave always recheck for Destroyed ones...
-                    Target[] targets = HumanLikeAlgorithms.GenerateTargets(_minimumAttackDistanceToCollectors, collectorCacheBehavior);
+                    Target[] targets = HumanLikeAlgorithms.GenerateTargets(_minimumAttackDistanceToCollectors, IgnoreGold, IgnoreElixir, collectorCacheBehavior);
                     collectorCount = targets.Length;
 
                     //Reorder the Deploy points so they look more human like when attacking.
@@ -191,8 +240,7 @@ namespace HumanBarchDeploy
 
                         // Wait for the wave to finish
                         Log.Info("[Human Barch] Deploy done. Waiting to finish...");
-                        foreach (var t in Attack.WaitForNoResourceChange(10))
-                            yield return t;
+                        var x = Attack.WatchResources(10d).Result;
 
                         break;
                     }
@@ -279,9 +327,11 @@ namespace HumanBarchDeploy
                             if (UserSettings.UseKing && king.Any())
                             {
                                 Log.Info($"[Human Barch] Deploying King at: X:{groupedTargets[p][1].DeployGrunts.X} Y:{groupedTargets[p][1].DeployGrunts.Y}");
-                                foreach (var t in DeployHeroes(king, groupedTargets[p][1].DeployGrunts.ToScreenAbsolute().ToEnumerable(), true))
+                                foreach (var t in Deploy.AtPoint(king[0], groupedTargets[p][1].DeployGrunts))
                                     yield return t;
-                                yield return Rand.Int(900, 1000); //Wait 
+                                yield return Rand.Int(900, 1000); //Wait
+
+                                watchHeroes = true;
                             }
                         }
 
@@ -295,11 +345,21 @@ namespace HumanBarchDeploy
                                 yield return Rand.Int(90, 100); //Wait before dropping Queen
 
                                 Log.Info($"[Human Barch] Deploying Queen at: X:{groupedTargets[p][1].DeployRanged.X} Y:{groupedTargets[p][1].DeployRanged.Y}");
-                                foreach (var t in DeployHeroes(queen, groupedTargets[p][1].DeployRanged.ToScreenAbsolute().ToEnumerable(), true))
+                                foreach (var t in Deploy.AtPoint(queen[0], groupedTargets[p][1].DeployRanged))
                                     yield return t;
-                                yield return Rand.Int(900, 1000); //Wait 
+                                yield return Rand.Int(900, 1000); //Wait
+
+                                watchHeroes = true;
                             }
                         }
+
+                        if (watchHeroes)
+                        {
+                            //Watch Heros and Hit ability when they get low.
+                            Deploy.WatchHeroes(allHeroes);
+                            watchHeroes = false; //Only do this once through the loop.
+                        }
+
 
                         //Deploy Ranged units on same set of Targets.
                         for (int i = 0; i < groupedTargets[p].Length; i++)
@@ -385,6 +445,13 @@ namespace HumanBarchDeploy
 
                 waveCounter++;
             }
+
+            //TODO - Can we destroy some trash buildings to get a star if we dont already have one?
+
+            //Last thing Call ZapDarkElixterDrills... This uses the Clashbot settings for when to zap, and what level drills to zap.
+            Log.Info("[Human Barch] Checking to see if we can Zap DE Drills...");
+            foreach (var t in ZapDarkElixirDrills())
+                yield return t;
 
             //We broke out of the attack loop... 
             Attack.Surrender();

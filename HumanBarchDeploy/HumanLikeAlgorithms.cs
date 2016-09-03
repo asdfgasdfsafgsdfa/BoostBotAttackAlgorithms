@@ -6,10 +6,12 @@ using CoC_Bot.API.Buildings;
 
 namespace SharedCode
 {
-
     public static class HumanLikeAlgorithms
     {
-        //Constants - TODO Pull from Config File??
+        //Not the exact center of the map, but close. (This is how to create a point using a float value, otherwise, if you create it at 0,0, it uses a different coordinates system, and shows up at the top left corner of the screen.)
+        public static PointFT Origin = new PointFT(-0.01f, 0.01f);
+
+        //Constants - Pull from Config File??
         private readonly static float _townHallToRedZoneMinDistance = 5.5f;
         private readonly static float _townHallCenterToOuterEdgeDistance = 2.1f;
         private readonly static float _gruntDeployDistanceFromRedline = 0.5f;
@@ -50,7 +52,7 @@ namespace SharedCode
             float px = (endPoint.X + vx * -distanceOutInTiles);
             float py = (endPoint.Y + vy * -distanceOutInTiles);
 
-            return new PointFT(px, py);  //Point that is {distanceOutInTiles} away from endPoint on the same line as StartPont and endPoint.
+            return SafePoint(px, py);  //Point that is {distanceOutInTiles} away from endPoint on the same line as StartPont and endPoint.
         }
 
         /// <summary>
@@ -73,13 +75,12 @@ namespace SharedCode
 
             for (int i = 0; i < numberOfPointsToReturn; i++)
             {
-                PointFT newPoint = new PointFT(Rand.Float(minX, maxX), Rand.Float(minY, maxY));
+                PointFT newPoint = SafePoint(Rand.Float(minX, maxX),  Rand.Float(minY, maxY));
                 retval[i] = newPoint;
             }
 
             return retval;
         }
-
 
         /// <summary>
         /// Given a Set of Attack Targets this will re-order the Array Starting at the target Index, and then finding the closest neighboring point to add to the output next 
@@ -300,11 +301,13 @@ namespace SharedCode
 
         public static Target GetSnipeDeployPoints(this TownHall townHall)
         {
-            Target target = townHall.GetTownHallPoints();
+            Target target = new Target();
             target.ValidTarget = false;
 
             if (townHall != null)
             {
+                target = townHall.GetTownHallPoints();
+
                 if (target.EdgeToRedline == 0)
                 {
                     target.DeployGrunts = target.Center.PointOnLineAwayFrom(target.Edge, 0.5f);  //TODO Move to Constants..
@@ -336,9 +339,8 @@ namespace SharedCode
         {
             Target target = new Target();
 
-            var origin = new PointFT(-0.01f, 0.01f); //Not the exact center of the map, but close. (This is how to create a point using a float value, otherwise, if you create it at 0,0, it uses a different coordinates system, and shows up at the top left corner of the screen.)
             target.Center = th.Location.GetCenter(); //Center of the Town Hall that was found.
-            target.Edge = origin.PointOnLineAwayFrom(target.Center, _townHallCenterToOuterEdgeDistance);
+            target.Edge = Origin.PointOnLineAwayFrom(target.Center, _townHallCenterToOuterEdgeDistance);
 
             target.NearestRedLine = GameGrid.RedPoints.OrderBy(p => p.DistanceSq(target.Edge)).First();
             target.EdgeToRedline = target.Edge.DistanceSq(target.NearestRedLine);
@@ -347,24 +349,33 @@ namespace SharedCode
             return target;
         }
 
-
-        public static int CountRipeCollectors(float minimumDistance, CacheBehavior behavior = CacheBehavior.Default)
+        public static int CountRipeCollectors(float minimumDistance, bool ignoreGold, bool ignoreElixir, CacheBehavior behavior = CacheBehavior.Default)
         {
-            Target[] targets = GenerateTargets(minimumDistance, behavior);
+            Target[] targets = GenerateTargets(minimumDistance, ignoreGold, ignoreElixir, behavior);
             return targets.Length;
         }
 
-        public static Target[] GenerateTargets(float minimumDistance, CacheBehavior behavior = CacheBehavior.Default)
+        public static Target[] GenerateTargets(float minimumDistance, bool ignoreGold, bool ignoreElixir, CacheBehavior behavior = CacheBehavior.Default)
         {
-            // Find all Collectors
+            // Find all Collectors & storages just sitting around...
             List<Building> buildings = new List<Building>();
-            buildings.AddRange(GoldMine.Find(behavior));
-            buildings.AddRange(ElixirCollector.Find(behavior));
-            buildings.AddRange(DarkElixirDrill.Find(behavior));
 
-            //Free Loot Type bases might have storages just sitting around...
-            buildings.AddRange(ElixirStorage.Find(behavior));
-            buildings.AddRange(GoldStorage.Find(behavior));
+            if (!ignoreGold)
+            {
+                //User has Gold min set to ZERO - which means Dont include Gold Targets
+                buildings.AddRange(GoldMine.Find(behavior));
+                buildings.AddRange(GoldStorage.Find(behavior));
+            }
+
+            if (!ignoreElixir)
+            {
+                //User has Elixir min set to ZERO - which means Dont include Elixir Targets
+                buildings.AddRange(ElixirCollector.Find(behavior));
+                buildings.AddRange(ElixirStorage.Find(behavior));
+            }
+
+            //We always includ DarkElixir - Because who doesnt love dark Elixir?
+            buildings.AddRange(DarkElixirDrill.Find(behavior));
             buildings.AddRange(DarkElixirStorage.Find(behavior));
 
             List<Target> targetList = new List<Target>();
@@ -390,6 +401,15 @@ namespace SharedCode
             Log.Debug($"[Berts Algorithms] Found {targetList.Count} deploy points");
 
             return targetList.ToArray();
+        }
+        public static PointFT SafePoint(float x, float y) {
+            //Make sure the point is inside the Playing field
+            if (x > GameGrid.MaxX + 2) x = GameGrid.MaxX + 1.8f;
+            if (x < GameGrid.MinX - 2) x = GameGrid.MinX - 1.8f;
+            if (y > GameGrid.MaxY + 2) y = GameGrid.MaxY + 1.8f;
+            if (y < GameGrid.MinY - 2) y = GameGrid.MinY - 1.8f;
+
+            return new PointFT(x, y);
         }
     }
 }
